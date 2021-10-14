@@ -2,12 +2,14 @@ package com.example.mysongapp;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
@@ -38,14 +40,24 @@ Context context;
         return musicUtils.nameofsongs.length;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder
-    {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView txtName;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtName = itemView.findViewById(R.id.txtName);
              txtName.setSelected(true);
+            ConstraintLayout layout = itemView.findViewById(R.id.parent);
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   context.startActivity(new Intent(context,music_in_play.class).putExtra("songs",musicUtils.songsFiles)
+                           .putExtra("position",getAdapterPosition())
+                   .putExtra("name_of_song",musicUtils.nameofsongs)
+                           );
+                }
+            });
         }
+
     }
 
 }
