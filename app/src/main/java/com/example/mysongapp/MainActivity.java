@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public ArrayList<File> findSongs(File file)
     {
-        ArrayList<File> arrayList=new ArrayList<>();
+        ArrayList<File> arrayList=new ArrayList<File>();
 
         File[] files=file.listFiles();
 

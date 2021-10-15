@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.media.AudioManager;
+import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
-import android.media.audiofx.Visualizer;
+
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,25 +17,24 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.gauravk.audiovisualizer.visualizer.BarVisualizer;
 import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class music_in_play extends AppCompatActivity {
 Button pause,skip_to_next_song,skip_to_pre_song,skip10sec,pre10sec;
-static volatile MediaPlayer mediaPlayer;
+static  MediaPlayer mediaPlayer;
 static String[] sname;
-static volatile int position;
+static  int position;
 ArrayList<File> musicList;
 static TextView music_Name;
 static ImageView imageView;
 SeekBar seekBar;
 CircleLineVisualizer visualizer;
-
+Thread update_seek_bar;
     @Override
     protected void onDestroy() {
         if(visualizer != null)
@@ -64,12 +63,7 @@ if(mediaPlayer!=null)
     mediaPlayer.stop();
     mediaPlayer.release();
 }
-        if(visualizer != null)
-        {
-            visualizer.release();
-        }
         Intent intent=getIntent();
-
     Bundle bundle=intent.getExtras();
     musicList=(ArrayList) bundle.getParcelableArrayList("songs");
     sname=bundle.getStringArray("name_of_song");
@@ -85,7 +79,48 @@ if(mediaPlayer!=null)
                if(audioseasonId != -1)
                 visualizer.setAudioSessionId(audioseasonId);
 
+update_seek_bar=new Thread(){
+    @Override
+    public void run() {
+    int maxDuration=mediaPlayer.getDuration();
+    int current_duration= 0;
+    while (current_duration<mediaPlayer.getDuration()){
+        try{
+            Thread.sleep(500);
+            current_duration=mediaPlayer.getCurrentPosition();
+            seekBar.setProgress(current_duration);
 
+        }catch (InterruptedException | IllegalStateException e){
+            e.printStackTrace();
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
+            }
+        }
+    }
+
+    }
+};
+seekBar.setMax(mediaPlayer.getDuration());
+update_seek_bar.start();
+seekBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.av_dark_blue), PorterDuff.Mode.MULTIPLY);
+seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+     mediaPlayer.seekTo(seekBar.getProgress());
+    }
+});
 //        Thread_music thread_music=new Thread_music(musicList,getApplicationContext());
 //        Thread t1=new Thread(thread_music);
 //        t1.start();
@@ -134,6 +169,8 @@ if(mediaPlayer!=null)
                 if(audioseasonId != -1)
                     visualizer.setAudioSessionId(audioseasonId);
             }
+            seekBar.setProgress(0);
+            seekBar.setMax(mediaPlayer.getDuration());
         }
     });
 
@@ -160,6 +197,7 @@ if(mediaPlayer!=null)
                 if(audioseasonId != -1)
                     visualizer.setAudioSessionId(audioseasonId);
             }
+            seekBar.setMax(mediaPlayer.getDuration());
         }
     });
 
@@ -181,6 +219,7 @@ if(mediaPlayer!=null)
 //            else
             try
             {
+
                 mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()+10000);
                 if(visualizer != null)
                 {
@@ -240,7 +279,15 @@ public static void update(){
                         music_in_play.mediaPlayer.start();
                         publishProgress(position);
 
-
+                        seekBar.setProgress(0);
+                        seekBar.setMax(mediaPlayer.getDuration());
+                        if(visualizer != null)
+                        {
+                            visualizer.release();
+                            int audioseasonId = mediaPlayer.getAudioSessionId();
+                            if(audioseasonId != -1)
+                                visualizer.setAudioSessionId(audioseasonId);
+                        }
                     }
 
                     SystemClock.sleep(1000);
