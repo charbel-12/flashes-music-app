@@ -1,32 +1,42 @@
 package com.example.mysongapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Notification;
+
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 
 import android.net.Uri;
 import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.os.SystemClock;
+
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
 
 import java.io.File;
+
 import java.util.ArrayList;
 
 public class music_in_play extends AppCompatActivity {
+    Notification notification;
+    NotificationCompat.Builder builder;
 Button pause,skip_to_next_song,skip_to_pre_song,skip10sec,pre10sec;
-static  MediaPlayer mediaPlayer;
+static volatile MediaPlayer mediaPlayer;
 static String[] sname;
 static  int position;
 ArrayList<File> musicList;
@@ -45,8 +55,17 @@ Thread update_seek_bar;
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        onBackPressed();
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("now playing");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         setContentView(R.layout.activity_music_in_play);
         pause=findViewById(R.id.pause);
         skip_to_next_song=findViewById(R.id.nextSong);
@@ -73,33 +92,42 @@ if(mediaPlayer!=null)
         Uri uri=Uri.parse(musicList.get(position).toString());
         mediaPlayer=MediaPlayer.create(getApplicationContext(),uri);
         music_Name.setText(sname[position]);
-               mediaPlayer.start();
+        mediaPlayer.start();
 
                int audioseasonId = mediaPlayer.getAudioSessionId();
                if(audioseasonId != -1)
                 visualizer.setAudioSessionId(audioseasonId);
 
+
+               //TODO: notification for show action while play music
+
+
+
+// this thread will update the seekbar in every second
 update_seek_bar=new Thread(){
     @Override
     public void run() {
-    int maxDuration=mediaPlayer.getDuration();
-    int current_duration= 0;
-    while (current_duration<mediaPlayer.getDuration()){
-        try{
-            Thread.sleep(500);
-            current_duration=mediaPlayer.getCurrentPosition();
+        try {
+for(;;) {
+    int maxDuration = mediaPlayer.getDuration();
+    int current_duration = 0;
+    while (current_duration < maxDuration) {
+        try {
+            SystemClock.sleep(500);
+            current_duration = mediaPlayer.getCurrentPosition();
             seekBar.setProgress(current_duration);
 
-        }catch (InterruptedException | IllegalStateException e){
+        } catch (IllegalStateException e) {
             e.printStackTrace();
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            }
+
+            SystemClock.sleep(250);
+
         }
     }
+}
+}catch(IllegalStateException e){ e.printStackTrace();
 
+            SystemClock.sleep(250);}
     }
 };
 seekBar.setMax(mediaPlayer.getDuration());
@@ -110,24 +138,54 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
     }
-
+//stop the music when the user change the position of SeekBar so we can handle it with out glitsh
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
+        mediaPlayer.pause();
     }
-
+//to follow the user when he use seek by seek bar
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-     mediaPlayer.seekTo(seekBar.getProgress());
+        if(seekBar.getProgress()==mediaPlayer.getDuration())
+        {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+
+            if(position == musicList.size()-1)
+                position=0;
+            else
+                position++;
+            music_Name.setText(sname[position]);
+            Uri uri =Uri.parse(musicList.get(position).toString());
+            pause.setBackgroundResource(R.drawable.pause);
+            mediaPlayer=MediaPlayer.create(getApplicationContext(),uri);
+            mediaPlayer.start();
+            startAnimation(imageView,0f,360f);
+
+            if(visualizer != null)
+            {
+                visualizer.release();
+                int audioseasonId = mediaPlayer.getAudioSessionId();
+                if(audioseasonId != -1)
+                    visualizer.setAudioSessionId(audioseasonId);
+            }
+            seekBar.setProgress(0);
+            seekBar.setMax(mediaPlayer.getDuration());
+        }
+        else{
+        mediaPlayer.seekTo(seekBar.getProgress());
+        mediaPlayer.start();}
     }
 });
+
+//our old thread
 //        Thread_music thread_music=new Thread_music(musicList,getApplicationContext());
 //        Thread t1=new Thread(thread_music);
 //        t1.start();
 
         Update update = new Update();
         update.execute(position);
-
+//to stop and start music
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,10 +199,7 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 }
             }
         });
-
-
-
-
+        //to skip to next song
         skip_to_next_song.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -204,21 +259,24 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
     skip10sec.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            if(mediaPlayer.getDuration()<=mediaPlayer.getCurrentPosition())
-//            {
-//                mediaPlayer.stop();
-//                mediaPlayer.release();
-//                if(position == musicList.size()-1)
-//                    position=0;
-//                else
-//                    position++;
-//                Uri uri = Uri.parse(musicList.get(position).toString());
-//                mediaPlayer = MediaPlayer.create(getApplicationContext(),uri);
-//                mediaPlayer.start();
-//            }
-//            else
             try
             {
+            if(mediaPlayer.getDuration()<=mediaPlayer.getCurrentPosition())
+            {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                if(position == musicList.size()-1)
+                    position=0;
+                else
+                    position++;
+                pause.setBackgroundResource(R.drawable.pause);
+                Uri uri = Uri.parse(musicList.get(position).toString());
+                mediaPlayer = MediaPlayer.create(getApplicationContext(),uri);
+                mediaPlayer.start();
+                startAnimation(imageView,0f,360f);
+            }
+            else
+
 
                 mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()+10000);
                 if(visualizer != null)
@@ -259,40 +317,44 @@ public static void update(){
         animatorSet.start();
     }
     public class Update extends AsyncTask<Integer,Integer,Void> {
-
-
-
         @Override
         protected Void doInBackground(Integer... integers) {
-            for (; ; ) {
+            for (;;) {
                 try {
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            music_in_play.mediaPlayer.stop();
+                            music_in_play.mediaPlayer.release();
+                            if (music_in_play.position == musicList.size() - 1)
+                                music_in_play.position = 0;
+                            else
+                                music_in_play.position++;
+                            Uri uri = Uri.parse(musicList.get(music_in_play.position).toString());
+                            music_in_play.mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
 
-                    if (music_in_play.mediaPlayer.getCurrentPosition() >= music_in_play.mediaPlayer.getDuration()) {
-                        music_in_play.mediaPlayer.stop();
-                        music_in_play.mediaPlayer.release();
-                        if (music_in_play.position == musicList.size() - 1)
-                            music_in_play.position = 0;
-                        else
-                            music_in_play.position++;
-                        Uri uri = Uri.parse(musicList.get(music_in_play.position).toString());
-                        music_in_play.mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-                        music_in_play.mediaPlayer.start();
-                        publishProgress(position);
+                            music_in_play.mediaPlayer.start();
 
-                        seekBar.setProgress(0);
-                        seekBar.setMax(mediaPlayer.getDuration());
-                        if(visualizer != null)
-                        {
-                            visualizer.release();
-                            int audioseasonId = mediaPlayer.getAudioSessionId();
-                            if(audioseasonId != -1)
-                                visualizer.setAudioSessionId(audioseasonId);
+                            seekBar.setProgress(0);
+                            seekBar.setMax(mediaPlayer.getDuration());
+
+                            if(visualizer != null)
+                            {
+                                visualizer.release();
+                                int audioseasonId = mediaPlayer.getAudioSessionId();
+                                if(audioseasonId != -1)
+                                    visualizer.setAudioSessionId(audioseasonId);
+                            }
+                            publishProgress(position);
                         }
-                    }
+                    });
+                    System.out.println("  current:  "+mediaPlayer.getCurrentPosition()+"    the all:  "+mediaPlayer.getDuration());
 
-                    SystemClock.sleep(1000);
+
+                    SystemClock.sleep(500);
 
                 } catch (java.lang.IllegalStateException illegalStateException) {
+                    illegalStateException.printStackTrace();
                     SystemClock.sleep(1000);
                 }
             }
@@ -306,4 +368,5 @@ public static void update(){
 
         }
     }
+
 }
