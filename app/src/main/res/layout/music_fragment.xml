@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#420303"
+    android:id="@+id/fragmentParent">
+
+    <Button
+        android:id="@+id/fragmentPause"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:layout_toLeftOf="@id/fragmentNextSong"
+        android:background="@drawable/pause"
+        android:layout_marginBottom="1dp"/>
+
+    <Button
+        android:id="@+id/fragmentPreSong"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_toLeftOf="@id/fragmentPause"
+        android:layout_centerVertical="true"
+        android:background="@drawable/skip_pre" />
+
+    <Button
+        android:id="@+id/fragmentNextSong"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/skip_next" />
+
+    <ImageView
+        android:id="@+id/fragmentImg"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="7dp"
+        android:src="@mipmap/icon_music2"/>
+
+    <TextView
+        android:id="@+id/fragmentMusicSong"
+        android:layout_width="120sp"
+        android:layout_height="20sp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/fragmentImg"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="Select a song...."
+        android:textColor="@color/white" />
+
+</RelativeLayout>

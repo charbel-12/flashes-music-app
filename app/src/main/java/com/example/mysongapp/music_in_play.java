@@ -35,7 +35,7 @@ import java.util.ArrayList;
 public class music_in_play extends AppCompatActivity {
     Notification notification;
     NotificationCompat.Builder builder;
-Button pause,skip_to_next_song,skip_to_pre_song,skip10sec,pre10sec;
+static Button pause,skip_to_next_song,skip_to_pre_song,skip10sec,pre10sec;
 static volatile MediaPlayer mediaPlayer;
 static String[] sname;
 static  int position;

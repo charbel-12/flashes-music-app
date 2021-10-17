@@ -55,7 +55,7 @@
 
     <SeekBar
         android:id="@+id/seekBar"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="30dp"
 
         android:background="@android:color/transparent"
@@ -134,4 +134,24 @@
 
         android:scrollHorizontally="true"
         android:singleLine="true"/>
+
+    <TextView
+        android:id="@+id/playingNow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+
+    <TextView
+        android:id="@+id/maxTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="@color/white"
+        android:textSize="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
 </androidx.constraintlayout.widget.ConstraintLayout>
