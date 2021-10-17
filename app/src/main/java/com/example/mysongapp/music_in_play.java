@@ -365,8 +365,9 @@ public static void update(){
             music_Name.setText(sname[position]);
             pause.setBackgroundResource(R.drawable.pause);
             startAnimation(imageView,0f,360f);
-
         }
     }
+    //Hello
+
 
 }
