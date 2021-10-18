@@ -30,14 +30,18 @@ import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
 
 import java.io.File;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-
+import java.util.Queue;
+import java.util.Random;
+import java.util.Stack;
 public class music_in_play extends AppCompatActivity {
-    Notification notification;
-    NotificationCompat.Builder builder;
-static Button pause,skip_to_next_song,skip_to_pre_song,skip10sec,pre10sec;
+    the_way_of_play the_way=the_way_of_play.order;
+static Button pause,skip_to_next_song,skip_to_pre_song,skip10sec,pre10sec,the_way_of_play_button;
 static volatile MediaPlayer mediaPlayer;
 static String[] sname;
+static Stack<Integer> position_in_shuffle_for_move_to_next;
+    static Stack<Integer> position_in_shuffle_for_move_to_previous;
 static  int position;
 ArrayList<File> musicList;
 static TextView music_Name;
@@ -73,6 +77,7 @@ Thread update_seek_bar;
         skip10sec=findViewById(R.id.next10);
         music_Name=findViewById(R.id.musicName);
         pre10sec=findViewById(R.id.pre10);
+        the_way_of_play_button=findViewById(R.id.the_way_of_play);
         imageView = findViewById(R.id.imageView);
         seekBar = findViewById(R.id.seekBar);
         visualizer = findViewById(R.id.circle_circle);
@@ -148,29 +153,7 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
     public void onStopTrackingTouch(SeekBar seekBar) {
         if(seekBar.getProgress()==mediaPlayer.getDuration())
         {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-
-            if(position == musicList.size()-1)
-                position=0;
-            else
-                position++;
-            music_Name.setText(sname[position]);
-            Uri uri =Uri.parse(musicList.get(position).toString());
-            pause.setBackgroundResource(R.drawable.pause);
-            mediaPlayer=MediaPlayer.create(getApplicationContext(),uri);
-            mediaPlayer.start();
-            startAnimation(imageView,0f,360f);
-
-            if(visualizer != null)
-            {
-                visualizer.release();
-                int audioseasonId = mediaPlayer.getAudioSessionId();
-                if(audioseasonId != -1)
-                    visualizer.setAudioSessionId(audioseasonId);
-            }
-            seekBar.setProgress(0);
-            seekBar.setMax(mediaPlayer.getDuration());
+           move_to_next_song(true);
         }
         else{
         mediaPlayer.seekTo(seekBar.getProgress());
@@ -182,7 +165,25 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 //        Thread_music thread_music=new Thread_music(musicList,getApplicationContext());
 //        Thread t1=new Thread(thread_music);
 //        t1.start();
-
+        the_way_of_play_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(the_way==the_way_of_play.order){
+                    the_way_of_play_button.setBackgroundResource(R.drawable.shuffle_image);
+                    the_way=the_way_of_play.shuffle;
+                    position_in_shuffle_for_move_to_next=new Stack<>();
+                    position_in_shuffle_for_move_to_previous=new Stack<>();
+                }
+                else if(the_way==the_way_of_play.shuffle){
+                    the_way_of_play_button.setBackgroundResource(R.drawable.rebeat_same_song);
+                    the_way=the_way_of_play.repeat_same_song;
+                }
+                else if(the_way==the_way_of_play.repeat_same_song){
+                    the_way_of_play_button.setBackgroundResource(R.drawable.by_order);
+                    the_way=the_way_of_play.order;
+                }
+            }
+        });
         Update update = new Update();
         update.execute(position);
 //to stop and start music
@@ -203,56 +204,14 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
         skip_to_next_song.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-
-            if(position == musicList.size()-1)
-                position=0;
-            else
-                position++;
-            music_Name.setText(sname[position]);
-            Uri uri =Uri.parse(musicList.get(position).toString());
-            pause.setBackgroundResource(R.drawable.pause);
-            mediaPlayer=MediaPlayer.create(getApplicationContext(),uri);
-            mediaPlayer.start();
-            startAnimation(imageView,0f,360f);
-
-            if(visualizer != null)
-            {
-                visualizer.release();
-                int audioseasonId = mediaPlayer.getAudioSessionId();
-                if(audioseasonId != -1)
-                    visualizer.setAudioSessionId(audioseasonId);
-            }
-            seekBar.setProgress(0);
-            seekBar.setMax(mediaPlayer.getDuration());
+           move_to_next_song(true);
         }
     });
 
     skip_to_pre_song.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-
-            if(position == 0)
-                position=musicList.size()-1;
-            else
-                position--;
-            music_Name.setText(sname[position]);
-            Uri uri = Uri.parse(musicList.get(position).toString());
-            pause.setBackgroundResource(R.drawable.pause);
-            mediaPlayer = MediaPlayer.create(getApplicationContext(),uri);
-            mediaPlayer.start();
-            startAnimation(imageView,360f,0f);
-            if(visualizer != null)
-            {
-                visualizer.release();
-                int audioseasonId = mediaPlayer.getAudioSessionId();
-                if(audioseasonId != -1)
-                    visualizer.setAudioSessionId(audioseasonId);
-            }
-            seekBar.setMax(mediaPlayer.getDuration());
+            move_to_next_song(false);
         }
     });
 
@@ -263,29 +222,10 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             {
             if(mediaPlayer.getDuration()<=mediaPlayer.getCurrentPosition())
             {
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                if(position == musicList.size()-1)
-                    position=0;
-                else
-                    position++;
-                pause.setBackgroundResource(R.drawable.pause);
-                Uri uri = Uri.parse(musicList.get(position).toString());
-                mediaPlayer = MediaPlayer.create(getApplicationContext(),uri);
-                mediaPlayer.start();
-                startAnimation(imageView,0f,360f);
+               move_to_next_song(true);
             }
             else
-
-
                 mediaPlayer.seekTo(mediaPlayer.getCurrentPosition()+10000);
-                if(visualizer != null)
-                {
-                    visualizer.release();
-                    int audioseasonId = mediaPlayer.getAudioSessionId();
-                    if(audioseasonId != -1)
-                        visualizer.setAudioSessionId(audioseasonId);
-                }
             }
             catch (java.lang.IllegalStateException illegalStateException)
             {
@@ -324,27 +264,7 @@ public static void update(){
                     mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mp) {
-                            music_in_play.mediaPlayer.stop();
-                            music_in_play.mediaPlayer.release();
-                            if (music_in_play.position == musicList.size() - 1)
-                                music_in_play.position = 0;
-                            else
-                                music_in_play.position++;
-                            Uri uri = Uri.parse(musicList.get(music_in_play.position).toString());
-                            music_in_play.mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-
-                            music_in_play.mediaPlayer.start();
-
-                            seekBar.setProgress(0);
-                            seekBar.setMax(mediaPlayer.getDuration());
-
-                            if(visualizer != null)
-                            {
-                                visualizer.release();
-                                int audioseasonId = mediaPlayer.getAudioSessionId();
-                                if(audioseasonId != -1)
-                                    visualizer.setAudioSessionId(audioseasonId);
-                            }
+                            move_to_next_song(true);
                             publishProgress(position);
                         }
                     });
@@ -367,7 +287,72 @@ public static void update(){
             startAnimation(imageView,0f,360f);
         }
     }
-    //Hello
 
+    public void move_to_next_song(boolean next_song){
 
+            music_in_play.mediaPlayer.stop();
+            music_in_play.mediaPlayer.release();
+            control_the_increase(next_song);
+            Uri uri = Uri.parse(musicList.get(music_in_play.position).toString());
+            music_in_play.mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+            music_in_play.mediaPlayer.start();
+            seekBar.setProgress(0);
+            seekBar.setMax(mediaPlayer.getDuration());
+            if(visualizer != null)
+            {
+                visualizer.release();
+                int audioseasonId = mediaPlayer.getAudioSessionId();
+                if(audioseasonId != -1)
+                    visualizer.setAudioSessionId(audioseasonId);
+            }
+        music_Name.setText(sname[position]);
+        pause.setBackgroundResource(R.drawable.pause);
+        startAnimation(imageView,0f,360f);
+    }
+
+    public void control_the_increase(boolean next_song){
+        if(the_way==the_way_of_play.order){
+            if(next_song){
+                if (music_in_play.position == musicList.size() - 1)
+                    music_in_play.position = 0;
+                else
+                    music_in_play.position++;
+            }
+            else{
+                if(position == 0)
+                    position=musicList.size()-1;
+                else
+                    position--;
+            }
+        }
+        else if(the_way==the_way_of_play.shuffle){
+            if(next_song){
+                if(position_in_shuffle_for_move_to_previous.empty()){
+                    position_in_shuffle_for_move_to_next.add(position);
+                Random random=new Random();
+                position=random.nextInt(musicList.size());
+                }
+                else{
+                    position_in_shuffle_for_move_to_next.add(position);
+                    position=position_in_shuffle_for_move_to_previous.pop();
+
+                }
+            }
+            else{
+                if(position_in_shuffle_for_move_to_next.isEmpty()){
+                    position_in_shuffle_for_move_to_previous.add(position);
+                    Random random=new Random();
+                    position=random.nextInt(musicList.size());
+
+                }
+                else {
+                    position_in_shuffle_for_move_to_previous.add(position);
+                    position=position_in_shuffle_for_move_to_next.pop();
+                }
+            }
+        }
+        else if(the_way==the_way_of_play.repeat_same_song){
+
+        }
+    }
 }
