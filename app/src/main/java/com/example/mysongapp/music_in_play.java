@@ -36,7 +36,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
 public class music_in_play extends AppCompatActivity {
-    the_way_of_play the_way=the_way_of_play.order;
+   static volatile the_way_of_play the_way=the_way_of_play.order;
 static Button pause,skip_to_next_song,skip_to_pre_song,skip10sec,pre10sec,the_way_of_play_button;
 static volatile MediaPlayer mediaPlayer;
 static String[] sname;
@@ -268,7 +268,7 @@ public static void update(){
                             publishProgress(position);
                         }
                     });
-                    System.out.println("  current:  "+mediaPlayer.getCurrentPosition()+"    the all:  "+mediaPlayer.getDuration());
+
 
 
                     SystemClock.sleep(500);
