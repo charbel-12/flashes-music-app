@@ -47,6 +47,7 @@ ArrayList<File> musicList;
 static TextView music_Name;
 static ImageView imageView;
 SeekBar seekBar;
+TextView playingNow,max;
 CircleLineVisualizer visualizer;
 Thread update_seek_bar;
     @Override
@@ -82,6 +83,8 @@ Thread update_seek_bar;
         seekBar = findViewById(R.id.seekBar);
         visualizer = findViewById(R.id.circle_circle);
         music_Name.setSelected(true);
+        playingNow = findViewById(R.id.playingNow);
+        max = findViewById(R.id.max);
 if(mediaPlayer!=null)
 {
     mediaPlayer.stop();
@@ -242,16 +245,19 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             }
         });
-
+        if((mediaPlayer.getDuration()/1000)%60 < 10)
+            max.setText(mediaPlayer.getDuration()/60000+":0"+(mediaPlayer.getDuration()/1000)%60+"");
+        else
+            max.setText(mediaPlayer.getDuration()/60000+":"+(mediaPlayer.getDuration()/1000)%60+"");
     }
-public static void update(){
-    music_Name.setText(sname[position]);
-    startAnimation(imageView,0f,360f);
-}
+//public static void update(){
+//    music_Name.setText(sname[position]);
+//    startAnimation(imageView,0f,360f);
+//}
     public static void startAnimation(View view,float a, float b)
     {
         ObjectAnimator animator = ObjectAnimator.ofFloat(view,"rotation",a,b);
-        animator.setDuration(2000);
+        animator.setDuration(1000);
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animator);
         animatorSet.start();
@@ -269,22 +275,36 @@ public static void update(){
                         }
                     });
 
-
-
                     SystemClock.sleep(500);
 
                 } catch (java.lang.IllegalStateException illegalStateException) {
                     illegalStateException.printStackTrace();
                     SystemClock.sleep(1000);
                 }
+                publishProgress(position);
             }
         }
         @Override
         protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            music_Name.setText(sname[position]);
-            pause.setBackgroundResource(R.drawable.pause);
-            startAnimation(imageView,0f,360f);
+            if(mediaPlayer.getCurrentPosition()<mediaPlayer.getDuration())
+            {
+                if((mediaPlayer.getCurrentPosition()/1000)%60 < 10)
+                    playingNow.setText(mediaPlayer.getCurrentPosition()/60000+":0"+(mediaPlayer.getCurrentPosition()/1000)%60+"");
+                else
+                    playingNow.setText(mediaPlayer.getCurrentPosition()/60000+":"+(mediaPlayer.getCurrentPosition()/1000)%60+"");
+
+            }
+            else
+            {
+                super.onProgressUpdate(values);
+                music_Name.setText(sname[position]);
+                pause.setBackgroundResource(R.drawable.pause);
+                startAnimation(imageView, 0f, 360f);
+                if((mediaPlayer.getDuration()/1000)%60 < 10)
+                    max.setText(mediaPlayer.getDuration()/60000+":0"+(mediaPlayer.getDuration()/1000)%60+"");
+                else
+                    max.setText(mediaPlayer.getDuration()/60000+":"+(mediaPlayer.getDuration()/1000)%60+"");
+            }
         }
     }
 
@@ -307,7 +327,15 @@ public static void update(){
             }
         music_Name.setText(sname[position]);
         pause.setBackgroundResource(R.drawable.pause);
-        startAnimation(imageView,0f,360f);
+        if(next_song)
+            startAnimation(imageView,0f,360f);
+        else
+            startAnimation(imageView,360f,0f);
+
+        if((mediaPlayer.getDuration()/1000)%60 < 10)
+            max.setText(mediaPlayer.getDuration()/60000+":0"+(mediaPlayer.getDuration()/1000)%60+"");
+        else
+            max.setText(mediaPlayer.getDuration()/60000+":"+(mediaPlayer.getDuration()/1000)%60+"");
     }
 
     public void control_the_increase(boolean next_song){

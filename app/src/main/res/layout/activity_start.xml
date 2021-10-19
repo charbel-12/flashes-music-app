@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StartActivity"
+    android:background="@mipmap/wall_wall_foreground">
+
+    <ImageView
+        android:id="@+id/welImg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/songName"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/icon_music2" />
+
+    <TextView
+        android:id="@+id/songName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linear1"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:shadowColor="#FF0000"
+        android:shadowRadius="10"
+        android:text="Select a Song"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linear1"
+        android:layout_above="@+id/linear2"
+>
+
+
+        <Button
+            android:id="@+id/allsongs"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:layout_weight="50"
+            android:background="@drawable/start_bg"
+            android:shadowColor="@color/white"
+            android:shadowRadius="15"
+            android:text="All Songs"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/playlists"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:layout_weight="50"
+            android:background="@drawable/start_bg"
+            android:shadowColor="@color/white"
+            android:shadowRadius="15"
+            android:text="Play Lists"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="7dp">
+
+        <Button
+            android:id="@+id/favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:layout_weight="50"
+            android:background="@drawable/start_bg"
+            android:shadowColor="@color/white"
+            android:shadowRadius="15"
+            android:text="Favorite"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/albums"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:layout_weight="50"
+            android:background="@drawable/start_bg"
+            android:shadowColor="@color/white"
+            android:shadowRadius="15"
+            android:text="Albums"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

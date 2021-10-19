@@ -31,7 +31,7 @@ public class Thread_music implements Runnable
                     music_in_play.position=0;
              else
                    music_in_play.position++;
-            music_in_play.update();
+//            music_in_play.update();
              Uri uri = Uri.parse(musicList.get(music_in_play.position).toString());
              music_in_play.mediaPlayer = MediaPlayer.create(context,uri);
              music_in_play.mediaPlayer.start();

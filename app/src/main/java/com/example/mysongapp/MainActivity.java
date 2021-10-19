@@ -28,12 +28,6 @@ public class MainActivity extends AppCompatActivity {
     String[] items;
 
     @Override
-    public void onBackPressed() {
-        this.finishAffinity();
-    }
-
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
