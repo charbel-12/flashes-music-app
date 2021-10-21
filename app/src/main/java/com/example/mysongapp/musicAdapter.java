@@ -1,6 +1,5 @@
 package com.example.mysongapp;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -17,7 +16,8 @@ import java.io.File;
 public class musicAdapter extends RecyclerView.Adapter<musicAdapter.ViewHolder> {
 musicUtils musicUtils;
 Context context;
-
+static Intent intent;
+static int pos = -1;
     public musicAdapter(com.example.mysongapp.musicUtils musicUtils, Context context) {
         this.musicUtils = musicUtils;
         this.context = context;
@@ -50,10 +50,12 @@ Context context;
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   context.startActivity(new Intent(context,music_in_play.class).putExtra("songs",musicUtils.songsFiles)
-                           .putExtra("position",getAdapterPosition())
-                   .putExtra("name_of_song",musicUtils.nameofsongs)
-                           );
+                    pos = getAdapterPosition();
+                 intent = new Intent(context,music_in_play.class).putExtra("songs",musicUtils.songsFiles)
+                            .putExtra("position",getAdapterPosition())
+                            .putExtra("name_of_song",musicUtils.nameofsongs);
+
+                    context.startActivity(intent);
                 }
             });
         }

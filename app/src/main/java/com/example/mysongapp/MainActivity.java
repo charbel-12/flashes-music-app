@@ -26,19 +26,14 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private musicAdapter adapter;
     String[] items;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.recyclerview);
         runtimePermission();
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        MusicFragment fragment = new MusicFragment();
-        Bundle bundle1 = new Bundle();
-        bundle1.putStringArray("NAMES",items);
-        fragment.setArguments(bundle1);
+        MusicFragment fragment = new MusicFragment(this);
         transaction.replace(R.id.fragment,fragment);
         transaction.commit();
 

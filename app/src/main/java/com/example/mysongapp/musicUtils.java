@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class musicUtils {
-String nameofsongs[];
-ArrayList<File> songsFiles;
+static String nameofsongs[];
+static ArrayList<File> songsFiles;
 
     public musicUtils(String[] nameofsongs, ArrayList<File> songsFiles) {
         this.nameofsongs = nameofsongs;

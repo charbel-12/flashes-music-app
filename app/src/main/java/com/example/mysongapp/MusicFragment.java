@@ -1,5 +1,7 @@
 package com.example.mysongapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,11 @@ public class MusicFragment extends Fragment {
     Button nextSong;
     Button preSong;
     RelativeLayout fragmentParent;
+    Context context;
+
+    public MusicFragment(Context context) {
+        this.context = context;
+    }
 
 
 
@@ -61,6 +68,16 @@ public class MusicFragment extends Fragment {
 
         musicName.setSelected(true);
 
+
+
+        fragmentParent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                context.startActivity(musicAdapter.intent);
+            }
+        });
+
+
         return view;
     }
 
@@ -70,6 +87,10 @@ public class MusicFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if(musicAdapter.pos == -1)
+            fragmentParent.setEnabled(false);
+        else
+            fragmentParent.setEnabled(true);
         if (music_in_play.pause == null)
         {
             pause.setEnabled(false);
@@ -93,5 +114,8 @@ public class MusicFragment extends Fragment {
 
         if(music_in_play.music_Name != null)
             musicName.setText(music_in_play.music_Name.getText());
+
+        if(music_in_play.pause != null)
+            pause.setBackground(music_in_play.pause.getBackground());
     }
 }
