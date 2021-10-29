@@ -6,12 +6,18 @@
         <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/drawable-anydpi/Repeat_same_song.xml" value="0.38984375" />
         <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/drawable-anydpi/ic_music_icon.xml" value="0.15" />
         <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/drawable/iconMusic_background.xml" value="0.2755208333333333" />
+        <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/drawable/image_backgroung.xml" value="0.1" />
+        <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/drawable/img_bg.xml" value="0.1515625" />
         <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/drawable/list_bg.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/drawable/wall_background.xml" value="0.14895833333333333" />
         <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/layout/activity_for_startapp.xml" value="0.4" />
         <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/layout/activity_main.xml" value="0.2361111111111111" />
         <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/layout/activity_music_in_play.xml" value="0.4" />
-        <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/layout/music_list.xml" value="0.23839009287925697" />
+        <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/layout/activity_start.xml" value="0.43822393822393824" />
+        <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/layout/activity_welcome.xml" value="0.3890625" />
+        <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/layout/music_fragment.xml" value="0.23984375" />
+        <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/layout/music_list.xml" value="0.38544474393531" />
+        <entry key="..\:/Users/Charbel/AndroidStudioProjects/mysongapp/app/src/main/res/layout/settings.xml" value="0.30416666666666664" />
         <entry key="app/src/main/res/drawable/list_bg.xml" value="0.3140625" />
         <entry key="app/src/main/res/drawable/start_bg.xml" value="0.3140625" />
         <entry key="app/src/main/res/layout/activity_for_startapp.xml" value="0.19322916666666667" />

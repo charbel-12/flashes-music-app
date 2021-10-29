@@ -10,17 +10,6 @@
 
 
 
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:src="@mipmap/icon_music2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline2" />
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
@@ -53,6 +42,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.298" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_in_music_in_play"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        app:cardCornerRadius="70dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/circle_circle"
+        app:layout_constraintEnd_toEndOf="@+id/circle_circle"
+        app:layout_constraintStart_toStartOf="@+id/circle_circle"
+        app:layout_constraintTop_toTopOf="@+id/circle_circle">
+
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="300dp"
+
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:background="@mipmap/icon_music2" />
+
+    </androidx.cardview.widget.CardView>
+
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
@@ -65,7 +76,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/card_in_music_in_play"
         app:layout_constraintVertical_bias="0.611" />
 
     <Button
@@ -140,7 +151,7 @@
         android:text="TextView"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintBottom_toTopOf="@+id/card_in_music_in_play"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

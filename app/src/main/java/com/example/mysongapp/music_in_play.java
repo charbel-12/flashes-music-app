@@ -9,7 +9,10 @@ import android.animation.ObjectAnimator;
 import android.app.Notification;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 
 import android.net.Uri;
@@ -24,6 +27,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.gauravk.audiovisualizer.visualizer.CircleLineVisualizer;
@@ -41,17 +45,23 @@ static Button pause,skip_to_next_song,skip_to_pre_song,skip10sec,pre10sec,the_wa
 static volatile MediaPlayer mediaPlayer;
 static String[] sname;
 static Stack<Integer> position_in_shuffle_for_move_to_next;
-    static Stack<Integer> position_in_shuffle_for_move_to_previous;
+static Stack<Integer> position_in_shuffle_for_move_to_previous;
 static  int position;
-ArrayList<File> musicList;
+static ArrayList<File> musicList;
 static TextView music_Name;
 static ImageView imageView;
-SeekBar seekBar;
-TextView playingNow,max;
-CircleLineVisualizer visualizer;
-Thread update_seek_bar;
+static SeekBar seekBar;
+static TextView playingNow,max;
+static CircleLineVisualizer visualizer;
+static Thread update_seek_bar;
+
+
+
+
+
     @Override
     protected void onDestroy() {
+
         if(visualizer != null)
         {
             visualizer.release();
@@ -65,6 +75,7 @@ Thread update_seek_bar;
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -77,6 +88,7 @@ Thread update_seek_bar;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setContentView(R.layout.activity_music_in_play);
+
         pause=findViewById(R.id.pause);
         skip_to_next_song=findViewById(R.id.nextSong);
         skip_to_pre_song=findViewById(R.id.preSong);
@@ -90,6 +102,9 @@ Thread update_seek_bar;
         music_Name.setSelected(true);
         playingNow = findViewById(R.id.playingNow);
         max = findViewById(R.id.max);
+
+
+
 if(mediaPlayer!=null)
 {
     mediaPlayer.stop();
@@ -104,13 +119,14 @@ if(mediaPlayer!=null)
 
         Uri uri=Uri.parse(musicList.get(position).toString());
         mediaPlayer=MediaPlayer.create(getApplicationContext(),uri);
+
         music_Name.setText(sname[position]);
         mediaPlayer.start();
 
                int audioseasonId = mediaPlayer.getAudioSessionId();
                if(audioseasonId != -1)
                 visualizer.setAudioSessionId(audioseasonId);
-
+        imageView.setImageBitmap(musicAdapter.createAlbumArt(musicList.get(position).toString()));
 
                //TODO: notification for show action while play music
 
@@ -118,8 +134,15 @@ if(mediaPlayer!=null)
 
 // this thread will update the seekbar in every second
 update_seek_bar=new Thread(){
+    public void p(){
+
+
+    }
+
     @Override
     public void run() {
+
+
         try {
 for(;;) {
     int maxDuration = mediaPlayer.getDuration();
@@ -143,6 +166,7 @@ for(;;) {
             SystemClock.sleep(250);}
     }
 };
+
 seekBar.setMax(mediaPlayer.getDuration());
 update_seek_bar.start();
 seekBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.av_dark_blue), PorterDuff.Mode.MULTIPLY);
@@ -154,6 +178,7 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 //stop the music when the user change the position of SeekBar so we can handle it with out glitsh
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
+
         mediaPlayer.pause();
     }
 //to follow the user when he use seek by seek bar
@@ -178,16 +203,19 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onClick(View v) {
                 if(the_way==the_way_of_play.order){
                     the_way_of_play_button.setBackgroundResource(R.drawable.shuffle_image);
+                    Toast.makeText(getApplicationContext(), "Shuffle", Toast.LENGTH_SHORT).show();
                     the_way=the_way_of_play.shuffle;
                     position_in_shuffle_for_move_to_next=new Stack<>();
                     position_in_shuffle_for_move_to_previous=new Stack<>();
                 }
                 else if(the_way==the_way_of_play.shuffle){
                     the_way_of_play_button.setBackgroundResource(R.drawable.rebeat_same_song);
+                    Toast.makeText(getApplicationContext(), "Repeat same song", Toast.LENGTH_SHORT).show();
                     the_way=the_way_of_play.repeat_same_song;
                 }
                 else if(the_way==the_way_of_play.repeat_same_song){
                     the_way_of_play_button.setBackgroundResource(R.drawable.by_order);
+                    Toast.makeText(getApplicationContext(), "By order", Toast.LENGTH_SHORT).show();
                     the_way=the_way_of_play.order;
                 }
             }
@@ -237,7 +265,7 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             }
             catch (java.lang.IllegalStateException illegalStateException)
             {
-                SystemClock.sleep(1000);
+                SystemClock.sleep(10);
             }
         }
     });
@@ -267,53 +295,58 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
         animatorSet.playTogether(animator);
         animatorSet.start();
     }
+
+
     public class Update extends AsyncTask<Integer,Integer,Void> {
         @Override
         protected Void doInBackground(Integer... integers) {
+
             for (;;) {
                 try {
                     mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mp) {
                             move_to_next_song(true);
-                            publishProgress(position);
+
+                            music_Name.setText(sname[position]);
+                            pause.setBackgroundResource(R.drawable.pause);
+                            startAnimation(imageView, 0f, 360f);
+                            if((mediaPlayer.getDuration()/1000)%60 <= 10)
+                                max.setText(mediaPlayer.getDuration()/60000+":0"+(mediaPlayer.getDuration()/1000)%60+"");
+                            else
+                                max.setText(mediaPlayer.getDuration()/60000+":"+(mediaPlayer.getDuration()/1000)%60+"");
                         }
                     });
 
-                    SystemClock.sleep(500);
-
                 } catch (java.lang.IllegalStateException illegalStateException) {
                     illegalStateException.printStackTrace();
-                    SystemClock.sleep(1000);
+                    SystemClock.sleep(10);
                 }
                 publishProgress(position);
+                SystemClock.sleep(50);
             }
         }
         @Override
         protected void onProgressUpdate(Integer... values) {
-            if(mediaPlayer.getCurrentPosition()<mediaPlayer.getDuration())
-            {
-                if((mediaPlayer.getCurrentPosition()/1000)%60 < 10)
-                    playingNow.setText(mediaPlayer.getCurrentPosition()/60000+":0"+(mediaPlayer.getCurrentPosition()/1000)%60+"");
-                else
-                    playingNow.setText(mediaPlayer.getCurrentPosition()/60000+":"+(mediaPlayer.getCurrentPosition()/1000)%60+"");
 
-            }
-            else
-            {
-                super.onProgressUpdate(values);
-                music_Name.setText(sname[position]);
-                pause.setBackgroundResource(R.drawable.pause);
-                startAnimation(imageView, 0f, 360f);
-                if((mediaPlayer.getDuration()/1000)%60 < 10)
-                    max.setText(mediaPlayer.getDuration()/60000+":0"+(mediaPlayer.getDuration()/1000)%60+"");
+
+                if((seekBar.getProgress()/1000)%60 < 10)
+                    playingNow.setText(seekBar.getProgress()/60000+":0"+(seekBar.getProgress()/1000)%60+"");
                 else
-                    max.setText(mediaPlayer.getDuration()/60000+":"+(mediaPlayer.getDuration()/1000)%60+"");
-            }
+                    playingNow.setText(seekBar.getProgress()/60000+":"+(seekBar.getProgress()/1000)%60+"");
+
+
         }
     }
-
+    /**
+     * this method do the what need to do when you move to next or previous song
+     * true== move to next song
+     * false == move to previous song
+     *
+    */
     public void move_to_next_song(boolean next_song){
+
+
 
             music_in_play.mediaPlayer.stop();
             music_in_play.mediaPlayer.release();
@@ -330,6 +363,7 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 if(audioseasonId != -1)
                     visualizer.setAudioSessionId(audioseasonId);
             }
+            imageView.setImageBitmap(musicAdapter.createAlbumArt(musicList.get(position).toString()));
         music_Name.setText(sname[position]);
         pause.setBackgroundResource(R.drawable.pause);
         if(next_song)
@@ -387,5 +421,11 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
         else if(the_way==the_way_of_play.repeat_same_song){
 
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("kkkkkkkkkkkk");
     }
 }

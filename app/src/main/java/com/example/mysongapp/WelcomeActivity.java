@@ -3,7 +3,6 @@ package com.example.mysongapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 public class WelcomeActivity extends AppCompatActivity {

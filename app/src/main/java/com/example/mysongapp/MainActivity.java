@@ -4,20 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.os.Bundle;
 import android.os.Environment;
-
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.karumi.dexter.listener.single.PermissionListener;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
    void displaySongs()
     {
         final ArrayList<File> songs = findSongs(Environment.getExternalStorageDirectory());
+
         items=new String[songs.size()];
         for(int i=0;i<songs.size();i++){
             items[i]=songs.get(i).getName().replace(".mp3","").replace(".wav","");
