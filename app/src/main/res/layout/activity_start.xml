@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".StartActivity"
-    android:background="@mipmap/wall_wall_foreground">
+    android:background="@mipmap/wall_wall_foreground"
+    android:id="@+id/startActivityParent">
 
     <ImageView
         android:id="@+id/welImg"
@@ -13,12 +14,7 @@
         android:layout_above="@+id/songName"
         android:layout_centerHorizontal="true"
         android:src="@mipmap/icon_music2" />
-<ImageView
-    android:layout_width="30dp"
-    android:layout_height="30dp"
-    android:src="@drawable/settings"
 
-    />
     <TextView
         android:id="@+id/songName"
         android:layout_width="wrap_content"
@@ -50,6 +46,7 @@
             android:shadowColor="@color/white"
             android:shadowRadius="15"
             android:text="All Songs"
+            android:layout_margin="1dp"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
@@ -62,6 +59,7 @@
             android:background="@drawable/start_bg"
             android:shadowColor="@color/white"
             android:shadowRadius="15"
+            android:layout_margin="1dp"
             android:text="Play Lists"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
@@ -83,6 +81,7 @@
             android:background="@drawable/start_bg"
             android:shadowColor="@color/white"
             android:shadowRadius="15"
+            android:layout_margin="1dp"
             android:text="Favorite"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
@@ -95,6 +94,7 @@
             android:layout_weight="50"
             android:background="@drawable/start_bg"
             android:shadowColor="@color/white"
+            android:layout_margin="1dp"
             android:shadowRadius="15"
             android:text="Albums"
             android:textAllCaps="false"

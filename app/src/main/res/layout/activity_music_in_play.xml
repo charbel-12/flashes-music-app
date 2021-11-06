@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".music_in_play"
     android:background="@mipmap/wall_wall_foreground"
+    android:id="@+id/musicInplayParent"
     >
 
 

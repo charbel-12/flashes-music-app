@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.os.Bundle;
 import android.os.Environment;
+import android.widget.LinearLayout;
+
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -20,10 +22,29 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private musicAdapter adapter;
     String[] items;
+    LinearLayout mainActivityParent ;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (SettingsActivity.b)
+        {
+            mainActivityParent.setBackgroundResource(R.color.black);
+        }
+        else
+        {
+            mainActivityParent.setBackgroundResource(R.color.white);
+        }
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mainActivityParent = findViewById(R.id.mainActivityParent);
+
+
         recyclerView = findViewById(R.id.recyclerview);
         runtimePermission();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

@@ -2,6 +2,7 @@ package com.example.mysongapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
 
 import android.animation.AnimatorSet;
@@ -54,7 +55,7 @@ static SeekBar seekBar;
 static TextView playingNow,max;
 static CircleLineVisualizer visualizer;
 static Thread update_seek_bar;
-
+ConstraintLayout musicInplayParent;
 
 
 
@@ -88,7 +89,7 @@ static Thread update_seek_bar;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setContentView(R.layout.activity_music_in_play);
-
+        musicInplayParent = findViewById(R.id.musicInplayParent);
         pause=findViewById(R.id.pause);
         skip_to_next_song=findViewById(R.id.nextSong);
         skip_to_pre_song=findViewById(R.id.preSong);
@@ -426,6 +427,6 @@ seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("kkkkkkkkkkkk");
+
     }
 }
